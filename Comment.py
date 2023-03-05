@@ -1,6 +1,8 @@
 class Comment:
     def __init__(self, postId):
         self.postId = postId
+        self.ID = None
+        self.reply = None
         self.commentText = None
         self.commenterID = None
         self.commenterName = None
@@ -18,6 +20,12 @@ class Comment:
         self.TotalSad = None
         self.TotalAngry = None
 
+
+    def setID(self, ID):
+        self.ID = ID
+
+    def setReply(self, reply):
+        self.reply = reply
     def setCommentText(self, commentText):
         self.commentText = commentText
 
@@ -68,6 +76,8 @@ class Comment:
 
     def __str__(self):
         return f'Post ID = {self.postId}\n' \
+               f'ID = {self.ID}\n' \
+               f'reply = {self.reply}\n' \
                f'commentText = {self.commentText}\n' \
                f'commenterID = {self.commenterID}\n' \
                f'commenterName = {self.commenterName}\n' \

@@ -3,6 +3,7 @@ class Post:
         self.url = url
         self.topic = topic
         self.socialMediaSource = category
+        self.ID = None
         self.PostID = None
         self.PosterID = None
         self.PostDate = None
@@ -25,6 +26,9 @@ class Post:
 
     def set_socialMediaSource(self, socialMediaSource):
         self.socialMediaSource = socialMediaSource
+
+    def setID(self, ID):
+        self.ID = ID
 
     def set_PostID(self, PostID):
         self.PostID = PostID
@@ -69,6 +73,7 @@ class Post:
         return f'Post url = {self.url}\n' \
                f'Topic = {self.topic}\n' \
                f'Category = {self.socialMediaSource}\n' \
+               f'ID = {self.ID}\n' \
                f'PostID = {self.PostID}\n' \
                f'PosterID = {self.PosterID}\n' \
                f'PostDate = {self.PostDate}\n' \
