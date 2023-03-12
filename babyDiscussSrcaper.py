@@ -14,6 +14,8 @@ from selenium.webdriver.chrome.options import Options
 from datetime import date, timedelta, datetime
 from urllib import parse, request
 import json
+
+from Comment import Comment
 from Post import Post
 
 if __name__ == "__main__":
@@ -46,39 +48,92 @@ if __name__ == "__main__":
         category = channel[i].getText()
         post = Post(url, topic, category)
 
-        #number_of_comment = number[i].find('span', {"class": "number"}).getText()
-        #views = view[i].find('span', {"class": "views"}).getText()
-        #last_comment_date = date[i].getText().strip()
+        PostID_index = url.find("/topic/")
+        PostID = url[PostID_index + 7:]
+        post.set_PostID(PostID)
 
         posts.append(post)
 
     driver.close()
     for i in posts:
 
-        # print(str(i))
-
         driver = webdriver.Chrome()
         driver.get(i.url)
         time.sleep(3)
 
         soup = BeautifulSoup(driver.page_source, 'html.parser')
-        content = soup.find('div', {"class": ["cooked"]})
-        i.setContent(content)
-        # print(content.getText())
+        content = soup.find('div', {"class": ["cooked"]}).getText()
+        i.setPostText(content)
 
-        comments = soup.find_all('div', {"class": "row"})
+        postTime = soup.find('span', {"class": ["relative-date"]}).attrs["data-time"]
+        i.set_PostDate(postTime)
+
+        article = soup.find("article", {"class": ["boxed", "onscreen-post"]})
+        i.setID(article.attrs["data-post-id"])
+
+        poster = article.find('span', {"class": ["first", "username"]}).find('a')
+        i.setPosterName(poster.getText())
+        i.set_PosterID(poster.attrs["href"][3:])
+
+        try:
+            numberOfLike = article.find('button', {"class": ["like-count"]}).getText()
+        except:
+            numberOfLike = 0
+        i.setTotalLike(numberOfLike)
+
+        print(i)
+
+        comments = soup.find_all('article', {"class": ["boxed", "onscreen-post"]})
         print(len(comments))
-        for comment in comments:
-            commentee = comment.find('span', {"class": ["first", "username"]}).find('a').getText()
 
-            print(comment.getText())
-            # print(commentee)
-            commentContent = comment.find('div', {"class": ["cooked"]}).getText()
+        for comment in comments:
+
+            comment_object = Comment(i.PostID)
+
+            commentee = comment.find('span', {"class": ["first", "username"]}).find('a').getText()
+            comment_object.setCommenterName(commentee)
+
+            commentContent = comment.find('div', {"class": ["cooked"]}).getText("", True)
+            comment_object.setCommentText(commentContent)
             # print(commentContent)
+
             try:
                 numberOfLike = comment.find('button', {"class": ["like-count"]}).getText()
             except:
                 numberOfLike = 0
-            # print(numberOfLike)
+
+            try:
+                quote = comment.find('aside', {"class": ["quote", "no-group"]})
+                replyToName = quote.attrs["data-username"]
+
+                blackquote = quote.find('blockquote')
+                reply = blackquote.attrs["id"]
+                reply_text = blackquote.getText()
+                commentContent = commentContent[commentContent.find(reply_text) + len(reply_text): ]
+
+                comment_object.setReplyToName(replyToName)
+                comment_object.setReply(reply)
+                comment_object.setCommentText(commentContent)
+
+            except:
+                print("no quote")
+            comment_object.setTotalLike(numberOfLike)
+
+            # find comment id
+            comment_id = comment.attrs["data-post-id"]
+            comment_object.setID(comment_id)
+
+            # find comment_floor
+            comment_floor = comment.attrs["id"][5:]
+            comment_object.setCommentFloor(comment_floor)
+
+            #find comment date
+            postTime = comment.find('span', {"class": ["relative-date"]}).attrs["data-time"]
+            comment_object.setCommentDate(postTime)
+
+            print(comment_object)
+
+
+
         break
 
