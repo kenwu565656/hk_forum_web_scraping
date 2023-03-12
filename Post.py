@@ -17,6 +17,7 @@ class Post:
         self.TotalWow = None
         self.TotalSad = None
         self.TotalAngry = None
+        self.page = None
 
     def set_url(self, url):
         self.url = url
