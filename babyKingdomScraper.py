@@ -18,12 +18,15 @@ import json
 from Comment import Comment
 from Post import Post
 import re
+from webScraperDAO import webScraperDAO
 
 if __name__ == "__main__":
 
     posts_list = []
     possible_post_to_scrap = []
     pattern = re.compile(r'^(normalthread_)')
+    dao = webScraperDAO()
+    dao.setCursor()
 
 
 
@@ -58,9 +61,12 @@ if __name__ == "__main__":
             post_object.set_PostDate(post_time)
             posts_list.append(post_object)
 
+
         driver.close()
 
-    for post in posts_list[:4]:
+    for post in posts_list:
+        dao.insertPost("babykingdompost", post)
+        time.sleep(1)
         print(str(post))
         driver = webdriver.Chrome()
         driver.maximize_window()
@@ -126,6 +132,8 @@ if __name__ == "__main__":
 
 
                 print(comment_object)
+                dao.insertComment("babykingdomcomment", comment_object)
+                time.sleep(1)
 
 
 

@@ -16,11 +16,14 @@ from urllib import parse, request
 import json
 from Post import Post
 from Comment import Comment
+from webScraperDAO import webScraperDAO
 
 if __name__ == "__main__":
 
     posts = []
     possible_post_to_scrap = []
+    dao = webScraperDAO()
+    dao.setCursor()
 
     driver = webdriver.Chrome()
     driver.maximize_window()
@@ -91,6 +94,9 @@ if __name__ == "__main__":
         post.setID(id)
 
         print(post)
+
+        dao.insertPost("discusspost", post)
+        time.sleep(1)
 
         # count how many page in a post
         pages_bar = soup.find('div', {"class": "pagination-buttons"})
@@ -164,8 +170,10 @@ if __name__ == "__main__":
                 comment_object.setTotalUnlike(dislike_number)
 
                 print(comment_object)
+                dao.insertComment("discusscomment", comment_object)
+                time.sleep(1)
 
             driver.close()
-            break
-        break
+
+
 

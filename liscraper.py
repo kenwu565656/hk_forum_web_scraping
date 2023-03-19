@@ -18,6 +18,9 @@ import re
 
 from Comment import Comment
 from Post import Post
+from webScraperDAO import webScraperDAO
+dao = webScraperDAO()
+dao.setCursor()
 
 if __name__ == "__main__":
 
@@ -67,7 +70,10 @@ if __name__ == "__main__":
         posts.append(post)
         print(post)
 
-        break
+        dao.insertPost("lihkgpost", post)
+        time.sleep(1)
+
+
     driver.close()
 
     for post in posts:
@@ -115,8 +121,10 @@ if __name__ == "__main__":
                     comment_object.setReply(quote)
 
                 print(comment_object)
+                dao.insertComment("lihkgcomment", comment_object)
+                time.sleep(1)
 
-                break
+
 
 
 

@@ -17,11 +17,14 @@ import json
 
 from Comment import Comment
 from Post import Post
+from webScraperDAO import webScraperDAO
 
 if __name__ == "__main__":
 
     posts = []
     possible_post_to_scrap = []
+    dao = webScraperDAO()
+    dao.setCursor()
 
     driver = webdriver.Chrome()
     driver.get('https://www.babydiscuss.com/top?period=daily')
@@ -135,5 +138,11 @@ if __name__ == "__main__":
 
 
 
-        break
+            dao.insertComment("badydiscusscomment", comment_object)
+            time.sleep(1)
+
+    for post in posts:
+        dao.insertPost("babydiscusspost", post)
+        time.sleep(1)
+
 
