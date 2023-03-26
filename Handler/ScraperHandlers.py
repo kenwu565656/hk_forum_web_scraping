@@ -7,4 +7,4 @@ def scraperHandler(forum):
     factory.findPosts("1")
     factory.getComments("")
 
-scraperHandler("lihkg")
+

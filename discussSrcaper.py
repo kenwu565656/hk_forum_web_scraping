@@ -14,9 +14,9 @@ from selenium.webdriver.chrome.options import Options
 from datetime import date, timedelta, datetime
 from urllib import parse, request
 import json
-from Post import Post
-from Comment import Comment
-from webScraperDAO import webScraperDAO
+from Models.Post import Post
+from Models.Comment import Comment
+from Repository.webScraperDAO import webScraperDAO
 
 if __name__ == "__main__":
 

@@ -15,10 +15,10 @@ from datetime import date, timedelta, datetime
 from urllib import parse, request
 import json
 
-from Comment import Comment
-from Post import Post
+from Models.Comment import Comment
+from Models.Post import Post
 import re
-from webScraperDAO import webScraperDAO
+from Repository.webScraperDAO import webScraperDAO
 
 if __name__ == "__main__":
 

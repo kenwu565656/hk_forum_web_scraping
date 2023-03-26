@@ -16,23 +16,24 @@ from urllib import parse, request
 import json
 import re
 
-from Comment import Comment
-from Post import Post
-from webScraperDAO import webScraperDAO
+from Models.Comment import Comment
+from Models.Post import Post
+from Repository.webScraperDAO import webScraperDAO
 from interface.scraper import Scraper
-
-dao = webScraperDAO()
-dao.setCursor()
 
 
 class LihkgScraper(Scraper):
 
     def __init__(self):
         self.posts = []
+        self.dao = webScraperDAO()
+        self.dao.setCursor()
 
     # override
     def getPosts(self, source):
-        driver = webdriver.Chrome()
+        options = Options()
+        options.add_argument('--headless')
+        driver = webdriver.Chrome(options=options)
         driver.get('https://lihkg.com/category/' + source)
         time.sleep(3)
         soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -92,7 +93,7 @@ class LihkgScraper(Scraper):
             self.posts.append(post)
             print(post)
 
-            dao.insertPost("lihkgpost", post)
+            self.dao.insertPost("lihkgpost", post)
             time.sleep(1)
 
 
@@ -100,7 +101,9 @@ class LihkgScraper(Scraper):
     def getCommentsInPosts(self, postUrl):
         for post in self.posts:
             for page in range(int(post.page)):
-                driver = webdriver.Chrome()
+                options = Options()
+                options.add_argument('--headless')
+                driver = webdriver.Chrome(options=options)
                 driver.get(f'{post.url}/page/{page}')
 
                 time.sleep(3)
@@ -165,6 +168,6 @@ class LihkgScraper(Scraper):
                         print("cannot find quote")
 
                     print(comment_object)
-                    dao.insertComment("lihkgcomment", comment_object)
+                    self.dao.insertComment("lihkgcomment", comment_object)
                     time.sleep(1)
 

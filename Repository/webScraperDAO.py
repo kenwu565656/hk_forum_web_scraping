@@ -5,9 +5,8 @@ from uuid import uuid4
 import uuid
 class webScraperDAO:
       def __init__(self):
-          connection_file = open('connection.json')
-          connection_detail = json.loads(connection_file)
-          print(connection_detail)
+          with open("Repository/connection.json") as connection_file:
+            connection_detail = json.load(connection_file)
           self.db = mysql.connector.connect(host=connection_detail["host"],
                                             user=connection_detail["user"],
                                             password=connection_detail["password"],
@@ -31,7 +30,7 @@ class webScraperDAO:
                 f"TotalSad, TotalAngry, createdtime)" \
                 f" VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
           timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-          val = (post.url, post.topic, post.socialMediaSource,
+          val = (str(post.url), post.topic, post.socialMediaSource,
                  post.PostID, post.PosterID, post.PostDate,
                  post.PosterName, str(post.PostText), timestamp
                  , post.TotalLike, post.TotalUnlike, post.TotalLove,
@@ -41,8 +40,9 @@ class webScraperDAO:
           try:
             self.cursor.execute(sql, val)
             self.db.commit()
-          except:
+          except Exception as e:
             print('insert fail')
+            print(e)
             self.db.rollback()
 
       def insertComment(self, table, comment):
@@ -59,7 +59,7 @@ class webScraperDAO:
                   comment.replyToID, comment.commentFloor, timestamp
                  , comment.TotalLike, comment.TotalUnLike, comment.TotalLove,
                  comment.TotalHaha, comment.TotalYay, comment.TotalWow,
-                 comment.TotalSad, comment.TotalAngry, timestamp, comment.reply)
+                 comment.TotalSad, comment.TotalAngry, timestamp, str(comment.reply))
 
           try:
               self.cursor.execute(sql, val)
